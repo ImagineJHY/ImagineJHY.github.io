@@ -7,6 +7,7 @@
 <body>
 <canvas id="canvas" width="398" height="298"></canvas>
 <script>
+ function main() {
  const canvas = document.querySelector("#canvas");
   console.log("1");
   const gl = canvas.getContext("webgl2", { preserveDrawingBuffer: true });
@@ -14,6 +15,8 @@
     return;
   }
  console.log("2");
+ }
+ main()
 </script>
 <video playsinline="" muted="" autoplay="" id="video" width="460" crossorigin="anonymous" src="https://beta-h5.xverse.cn/bug-report/sample_25fps.mp4" style="position: absolute; top: 0px; right: 1px;"></video></body><!--
 --></html>
