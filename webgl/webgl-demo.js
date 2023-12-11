@@ -106,7 +106,7 @@ function main() {
   const buffers = initBuffers(gl);
 
   const texture = initTexture(gl);
-  const video = setupVideo("Firefox.mp4");
+  const video = setupVideo("video.mp4");
 
   // Flip image pixels into the bottom-to-top order that WebGL expects.
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -242,7 +242,6 @@ function updateTexture(gl, texture, video) {
 }
 
 function setupVideo(url) {
-  url = 'https://beta-h5.xverse.cn/bug-report/sample_25fps.mp4'
   const video = document.createElement("video");
 
   let playing = false;
