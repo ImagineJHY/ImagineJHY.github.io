@@ -1,0 +1,372 @@
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>WebGL - load obj - cube</title>
+<link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet">
+</head>
+<body>
+<canvas id="canvas" width="398" height="298"></canvas>
+
+
+<script src="resources/webgl-utils.js"></script>
+<script src="resources/m4.js"></script>
+<script>
+"use strict";
+
+// This is not a full .obj parser.
+// see http://paulbourke.net/dataformats/obj/
+
+function parseOBJ(text) {
+  // because indices are base 1 let's just fill in the 0th data
+  const objPositions = [[0, 0, 0]];
+  const objTexcoords = [[0, 0]];
+  const objNormals = [[0, 0, 0]];
+
+  // same order as `f` indices
+  const objVertexData = [
+    objPositions,
+    objTexcoords,
+    objNormals,
+  ];
+
+  // same order as `f` indices
+  let webglVertexData = [
+    [],   // positions
+    [],   // texcoords
+    [],   // normals
+  ];
+
+  function newGeometry() {
+    // If there is an existing geometry and it's
+    // not empty then start a new one.
+    if (geometry && geometry.data.position.length) {
+      geometry = undefined;
+    }
+    setGeometry();
+  }
+
+  function addVertex(vert) {
+    const ptn = vert.split('/');
+    ptn.forEach((objIndexStr, i) => {
+      if (!objIndexStr) {
+        return;
+      }
+      const objIndex = parseInt(objIndexStr);
+      const index = objIndex + (objIndex >= 0 ? 0 : objVertexData[i].length);
+      webglVertexData[i].push(...objVertexData[i][index]);
+    });
+  }
+
+  const keywords = {
+    v(parts) {
+      objPositions.push(parts.map(parseFloat));
+    },
+    vn(parts) {
+      objNormals.push(parts.map(parseFloat));
+    },
+    vt(parts) {
+      // should check for missing v and extra w?
+      objTexcoords.push(parts.map(parseFloat));
+    },
+    f(parts) {
+      const numTriangles = parts.length - 2;
+      for (let tri = 0; tri < numTriangles; ++tri) {
+        addVertex(parts[0]);
+        addVertex(parts[tri + 1]);
+        addVertex(parts[tri + 2]);
+      }
+    },
+  };
+
+  const keywordRE = /(\w*)(?: )*(.*)/;
+  const lines = text.split('\n');
+  for (let lineNo = 0; lineNo < lines.length; ++lineNo) {
+    const line = lines[lineNo].trim();
+    if (line === '' || line.startsWith('#')) {
+      continue;
+    }
+    const m = keywordRE.exec(line);
+    if (!m) {
+      continue;
+    }
+    const [, keyword, unparsedArgs] = m;
+    const parts = line.split(/\s+/).slice(1);
+    const handler = keywords[keyword];
+    if (!handler) {
+      console.warn('unhandled keyword:', keyword);  // eslint-disable-line no-console
+      continue;
+    }
+    handler(parts, unparsedArgs);
+  }
+
+  return {
+    position: webglVertexData[0],
+    texcoord: webglVertexData[1],
+    normal: webglVertexData[2],
+  };
+}
+
+
+let copyVideo = false;
+
+ 
+
+function setupVideo(url) {
+  const video = document.createElement("video");
+  document.body.appendChild(video);
+
+  let playing = false;
+  let timeupdate = false;
+ 
+  // const video = document.createElement('video')
+  // document.body.appendChild(video)
+  video.playsInline = true
+  video.muted = true
+  video.setAttribute('muted', '')
+  video.autoplay = true
+  video.hidden = false
+  video.id = "video"
+  // video.srcObject = null
+  video.width = 460
+  video.style.position = 'absolute'
+  video.style.top = '0px' 
+  // video.style.height = '0'
+  video.style.right = '1px'
+  video.crossOrigin="anonymous"
+
+  video.addEventListener(
+    "playing",
+    () => {
+      playing = true;
+      checkReady();
+    },
+    true
+  );
+
+  video.addEventListener(
+    "timeupdate",
+    () => {
+      timeupdate = true;
+      checkReady();
+    },
+    true
+  ); 
+
+  video.src = url;
+  video.play();
+
+  function checkReady() {
+    if (playing && timeupdate) {
+      copyVideo = true;
+    }
+  }
+
+    
+  window.addEventListener('click', () => {
+      video.play()
+  })
+
+
+  return video;
+}
+
+function initTexture(gl) {
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Because video has to be download over the internet
+  // they might take a moment until it's ready so
+  // put a single pixel in the texture so we can
+  // use it immediately.
+  const level = 0;
+  const internalFormat = gl.RGBA;
+  const width = 1;
+  const height = 1;
+  const border = 0;
+  const srcFormat = gl.RGBA;
+  const srcType = gl.UNSIGNED_BYTE;
+  const pixel = new Uint8Array([0, 0, 255, 255]); // opaque blue
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    level,
+    internalFormat,
+    width,
+    height,
+    border,
+    srcFormat,
+    srcType,
+    pixel
+  );
+
+  // Turn off mips and set wrapping to clamp to edge so it
+  // will work regardless of the dimensions of the video.
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+  return texture;
+}
+
+async function delay_fetch(url){
+  setTimeout(()=>{
+    return fetch(url)
+  }, 10000)
+}
+
+async function main() {
+  // Get A WebGL context
+  /** @type {HTMLCanvasElement} */
+  const canvas = document.querySelector("#canvas");
+  const gl = canvas.getContext("webgl2", { preserveDrawingBuffer: true });
+  if (!gl) {
+    return;
+  }
+
+  const vs = `
+  attribute vec4 a_position;
+  attribute vec3 a_normal;
+  attribute vec2 a_texcoord;
+
+  varying vec2 v_texcoord;
+
+  uniform mat4 u_projection;
+  uniform mat4 u_view;
+  uniform mat4 u_world;
+
+  varying vec3 v_normal;
+
+  void main() {
+    gl_Position = u_projection * u_view * u_world * a_position;
+    v_normal = mat3(u_world) * a_normal;
+
+    // Pass the texcoord to the fragment shader.
+    v_texcoord = a_texcoord;
+  }
+  `;
+
+  const fs = `
+  precision mediump float;
+
+  varying vec3 v_normal;
+  // Passed in from the vertex shader.
+  varying vec2 v_texcoord;
+
+    // The texture.
+  uniform sampler2D uSampler;
+  uniform vec4 u_diffuse;
+  uniform vec3 u_lightDirection;
+
+  void main () {
+    vec3 normal = normalize(v_normal);
+
+    highp vec4 texelColor = texture2D(uSampler, v_texcoord);
+    gl_FragColor = vec4(texelColor.rgb, 1.0); 
+  }
+  `;
+
+
+  // compiles and links the shaders, looks up attribute and uniform locations
+  const meshProgramInfo = webglUtils.createProgramInfo(gl, [vs, fs]);
+
+ 
+  const response = await fetch('resources/models/sphere-58w.obj');  /* webglfundamentals: url */
+  // const response = await delay_fetch('resources/models/sphere-58w.obj');
+  const text = await response.text();
+  const data = parseOBJ(text);
+ 
+  // create a buffer for each array by calling
+  // gl.createBuffer, gl.bindBuffer, gl.bufferData
+  const bufferInfo = webglUtils.createBufferInfoFromArrays(gl, data);
+
+  const cameraTarget = [0, 0, 0];
+  const cameraPosition = [0, 0, 4];
+  const zNear = 0.1;
+  const zFar = 50;
+
+  function degToRad(deg) {
+    return deg * Math.PI / 180;
+  }
+ 
+  const video = setupVideo("https://beta-h5.xverse.cn/bug-report/sample_25fps.mp4");
+
+
+  let buffer = new Uint8Array( 100*100*4);
+
+  const texture = initTexture(gl);
+
+  let useRAF = false;
+
+  let lastTime = -1;
+  let costTime = 0;
+
+  const rrRender = async ()=>{
+    webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.CULL_FACE);
+
+        const fieldOfViewRadians = degToRad(60);
+        const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        const projection = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
+
+        const up = [0, 1, 0];
+        // Compute the camera's matrix using look at.
+        const camera = m4.lookAt(cameraPosition, cameraTarget, up);
+
+        // Make a view matrix from the camera matrix.
+        const view = m4.inverse(camera);
+
+        const sharedUniforms = {
+          u_lightDirection: m4.normalize([-1, 3, 5]),
+          u_view: view,
+          u_projection: projection,
+        };
+
+        gl.useProgram(meshProgramInfo.program);
+          
+        // calls gl.uniform
+        webglUtils.setUniforms(meshProgramInfo, sharedUniforms);
+
+        // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
+        webglUtils.setBuffersAndAttributes(gl, meshProgramInfo, bufferInfo);
+
+        // calls gl.uniform
+        webglUtils.setUniforms(meshProgramInfo, {
+          u_world: m4.yRotation(0),
+          u_diffuse: [1, 0.7, 0.5, 1],
+        });
+    
+  
+          
+  
+        if( copyVideo ){
+          gl.bindTexture(gl.TEXTURE_2D, texture);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+        }else{
+          // Fill the texture with a 1x1 blue pixel.
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+        } 
+
+   
+              // Tell WebGL we want to affect texture unit 0
+        gl.activeTexture(gl.TEXTURE0);
+        // Bind the texture to texture unit 0
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        // Tell the shader we bound the texture to texture unit 0
+        gl.uniform1i( gl.getUniformLocation(meshProgramInfo.program, "uSampler"), 0);
+
+      
+           // calls gl.drawArrays or gl.drawElements
+        webglUtils.drawBufferInfo(gl, bufferInfo);
+  }
+
+ setInterval(()=>{
+    rrRender();
+ }, 1)
+  
+}
+
+
+main();
+</script>
+</html>
