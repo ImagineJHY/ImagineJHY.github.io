@@ -336,17 +336,9 @@ async function main() {
           u_diffuse: [1, 0.7, 0.5, 1],
         });
     
-        // calls gl.drawArrays or gl.drawElements
-        webglUtils.drawBufferInfo(gl, bufferInfo);
+  
           
-        // Tell WebGL we want to affect texture unit 0
-        gl.activeTexture(gl.TEXTURE0);
-        // Bind the texture to texture unit 0
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        // Tell the shader we bound the texture to texture unit 0
-        gl.uniform1i( gl.getUniformLocation(meshProgramInfo.program, "uSampler"), 0);
-
-        
+  
         if( copyVideo ){
           gl.bindTexture(gl.TEXTURE_2D, texture);
           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
@@ -354,11 +346,23 @@ async function main() {
           // Fill the texture with a 1x1 blue pixel.
           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
         } 
+
+   
+              // Tell WebGL we want to affect texture unit 0
+        gl.activeTexture(gl.TEXTURE0);
+        // Bind the texture to texture unit 0
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        // Tell the shader we bound the texture to texture unit 0
+        gl.uniform1i( gl.getUniformLocation(meshProgramInfo.program, "uSampler"), 0);
+
+      
+           // calls gl.drawArrays or gl.drawElements
+        webglUtils.drawBufferInfo(gl, bufferInfo);
   }
 
  setInterval(()=>{
     rrRender();
- }, 1)
+ }, 10)
   
 }
 
