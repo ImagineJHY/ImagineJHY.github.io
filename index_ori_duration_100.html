@@ -113,7 +113,9 @@ let copyVideo = false;
 
 function setupVideo(url) {
   const video = document.createElement("video");
-  document.body.appendChild(video);
+  const div = document.createElement("div");
+  div.appendChild(video);
+  document.body.appendChild(div);
 
   let playing = false;
   let timeupdate = false;
