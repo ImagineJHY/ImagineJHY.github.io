@@ -45,7 +45,9 @@
               responseType: "arraybuffer",
             });
             console.log("fetch data finish.");
+            console.log("arrayBuffer start.");
             const data = await response.arrayBuffer();
+            console.log("arrayBuffer finish.");
             renderImg(data);
           } catch (error) {
             console.error("Error fetching data:", error);
