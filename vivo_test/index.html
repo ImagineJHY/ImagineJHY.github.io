@@ -21,7 +21,7 @@
         console.log("renderImg start")
         const w = 1024;
         const h = 576;
-        const ctx = canvas.getContext("webgl");
+        const ctx = canvas.getContext("2d");
         const tmp = YUVCanvas.draw(w, h, new Uint8Array(data), canvas);
         const screenRatio = window.devicePixelRatio || 1;
         console.log("hans2:", screenRatio);
