@@ -41,12 +41,13 @@ export default class YUVCanvas {
     }
   }
 
-  static draw(wd, hi, dt) {
+  static draw(wd, hi, dt, canvas)
+  {
     if (!dt) return undefined;
     const type = dt.length === 2 * wd * hi ? "yuv422" : "yuv420";
     if (!this.instance || type !== this.instance.type) {
       console.log("YUVCanvas draw", wd, hi);
-      this.instance = new YUVCanvas({ type, wd, hi });
+      this.instance = new YUVCanvas({ type, wd, hi, canvas });
     }
     this.instance.drawNextOutputPicture(wd, hi, dt);
     return this.instance.canvas;
@@ -82,6 +83,7 @@ export default class YUVCanvas {
       const contextName = validContextNames[i];
       try {
         this.gl = canvas.getContext(contextName);
+        console.log(contextName);
         if (typeof this.gl.getParameter === "function") break;
       } catch (e) {
         this.gl = null;
