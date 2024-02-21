@@ -18,6 +18,7 @@
       const myDiv = document.getElementById("mdiv");
       const btn = document.getElementById("btn");
       const renderImg = (data) => {
+        console.log("renderImg start")
         const w = 1024;
         const h = 576;
         const ctx = canvas.getContext("webgl");
@@ -33,6 +34,7 @@
 
         // console.log(tmp);
         // myDiv.appendChild(tmp);
+        console.log("renderImg finish")
       };
 
       function btnClick() {
