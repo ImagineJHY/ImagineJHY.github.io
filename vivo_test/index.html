@@ -23,17 +23,17 @@
         const h = 576;
         const ctx = canvas.getContext("webgl");
         const tmp = YUVCanvas.draw(w, h, new Uint8Array(data), canvas);
-        // const screenRatio = window.devicePixelRatio || 1;
-        // console.log("hans2:", screenRatio);
-        // canvas.width = Math.floor(300 * screenRatio);
-        // canvas.height = Math.floor(168 * screenRatio);
-        // ctx.save();
-        // ctx.scale(screenRatio, screenRatio);
-        // ctx.drawImage(tmp, 0, 0, w, h, 0, 0, 300, 168);
-        // ctx.restore();
+        const screenRatio = window.devicePixelRatio || 1;
+        console.log("hans2:", screenRatio);
+        canvas.width = Math.floor(300 * screenRatio);
+        canvas.height = Math.floor(168 * screenRatio);
+        ctx.save();
+        ctx.scale(screenRatio, screenRatio);
+        ctx.drawImage(tmp, 0, 0, w, h, 0, 0, 300, 168);
+        ctx.restore();
 
-        // console.log(tmp);
-        // myDiv.appendChild(tmp);
+        console.log(tmp);
+        myDiv.appendChild(tmp);
         console.log("renderImg finish")
       };
 

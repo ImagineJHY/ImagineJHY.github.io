@@ -49,7 +49,7 @@ export default class YUVCanvas {
     console.log("type", type);
     if (!this.instance || type !== this.instance.type) {
       console.log("YUVCanvas draw", wd, hi);
-      this.instance = new YUVCanvas({ type, wd, hi, canvas });
+      this.instance = new YUVCanvas({ type, wd, hi });
     }
     this.instance.drawNextOutputPicture(wd, hi, dt);
     return this.instance.canvas;
