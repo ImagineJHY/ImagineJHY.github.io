@@ -19,8 +19,8 @@
       const btn = document.getElementById("btn");
       const renderImg = (data) => {
         console.log("renderImg start")
-        const w = 1024;
-        const h = 576;
+        const w = 256;
+        const h = 256;
         const ctx = canvas.getContext("2d");
         const tmp = YUVCanvas.draw(w, h, new Uint8Array(data), canvas);
         const screenRatio = window.devicePixelRatio || 1;
@@ -39,19 +39,22 @@
 
       async function btnClick() {
         console.log("btn click");
-          try {
-            console.log("fetch data start.");
-            const response = await fetch("./raw2023111601.data", {
-              responseType: "arraybuffer",
-            });
-            console.log("fetch data finish.");
-            console.log("arrayBuffer start.");
-            const data = await response.arrayBuffer();
-            console.log("arrayBuffer finish.");
-            renderImg(data);
-          } catch (error) {
-            console.error("Error fetching data:", error);
-          }
+        const size = 65536;
+        const array = new Array(size).fill(0);
+        renderImg(array);
+          // try {
+          //   console.log("fetch data start.");
+          //   const response = await fetch("./raw2023111601.data", {
+          //     responseType: "arraybuffer",
+          //   });
+          //   console.log("fetch data finish.");
+          //   console.log("arrayBuffer start.");
+          //   const data = await response.arrayBuffer();
+          //   console.log("arrayBuffer finish.");
+          //   renderImg(data);
+          // } catch (error) {
+          //   console.error("Error fetching data:", error);
+          // }
       }
 
       document.body.onload = () => {

@@ -203,37 +203,42 @@ export default class YUVCanvas {
 
   drawNextOutputPicture(width, height, data) {
     console.log("this.gl", this.gl);
-    // if (this.gl) {
-    //   this.initSize({ width, height });
+    if (this.gl)
+    {
+      this.initSize({ width, height });
 
-    //   let i, x, y;
-    //   for (i = 0, x = 0, y = 0; i < height; i++) {
-    //     this.ydata.set(data.subarray(x, x + width), y);
-    //     x += width;
-    //     y += this.width;
-    //   }
-    //   const dataUVWidth = width / 2;
-    //   const dataUVHeight = this.type === "yuv422" ? height : height / 2;
-    //   for (i = 0, y = 0; i < dataUVHeight; i++) {
-    //     this.udata.set(data.subarray(x, x + dataUVWidth), y);
-    //     x += dataUVWidth;
-    //     y += this.uvWidth;
-    //   }
-    //   for (i = 0, y = 0; i < dataUVHeight; i++) {
-    //     this.vdata.set(data.subarray(x, x + dataUVWidth), y);
-    //     x += dataUVWidth;
-    //     y += this.uvWidth;
-    //   }
-    //   console.log("drawNextOuptutPictureGL start");
-    //   this.drawNextOuptutPictureGL();
-    //   console.log("drawNextOuptutPictureGL finish");
-    // } else {
+      let i, x, y;
+      for (i = 0, x = 0, y = 0; i < height; i++)
+      {
+        this.ydata.set(data.subarray(x, x + width), y);
+        x += width;
+        y += this.width;
+      }
+      const dataUVWidth = width / 2;
+      const dataUVHeight = this.type === "yuv422" ? height : height / 2;
+      for (i = 0, y = 0; i < dataUVHeight; i++)
+      {
+        this.udata.set(data.subarray(x, x + dataUVWidth), y);
+        x += dataUVWidth;
+        y += this.uvWidth;
+      }
+      for (i = 0, y = 0; i < dataUVHeight; i++)
+      {
+        this.vdata.set(data.subarray(x, x + dataUVWidth), y);
+        x += dataUVWidth;
+        y += this.uvWidth;
+      }
+      console.log("drawNextOuptutPictureGL start");
+      this.drawNextOuptutPictureGL();
+      console.log("drawNextOuptutPictureGL finish");
+    } else
+    {
       this.width = width;
       this.height = height;
       this.canvas.width = width;
       this.canvas.height = height;
       this.drawNextOuptutPictureRGBA(data);
-    // }
+    }
   }
 
   drawNextOuptutPictureRGBA(data) {
