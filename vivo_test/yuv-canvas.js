@@ -43,8 +43,10 @@ export default class YUVCanvas {
 
   static draw(wd, hi, dt, canvas)
   {
+    console.log(wd, hi, dt, canvas);
     if (!dt) return undefined;
     const type = dt.length === 2 * wd * hi ? "yuv422" : "yuv420";
+    console.log("type", type);
     if (!this.instance || type !== this.instance.type) {
       console.log("YUVCanvas draw", wd, hi);
       this.instance = new YUVCanvas({ type, wd, hi, canvas });
@@ -200,6 +202,7 @@ export default class YUVCanvas {
   }
 
   drawNextOutputPicture(width, height, data) {
+    console.log("this.gl", this.gl);
     if (this.gl) {
       this.initSize({ width, height });
 
@@ -221,7 +224,9 @@ export default class YUVCanvas {
         x += dataUVWidth;
         y += this.uvWidth;
       }
+      console.log("drawNextOuptutPictureGL start");
       this.drawNextOuptutPictureGL();
+      console.log("drawNextOuptutPictureGL finish");
     } else {
       this.width = width;
       this.height = height;
