@@ -37,12 +37,19 @@
         console.log("renderImg finish")
       };
 
-      function btnClick() {
-        fetch("./raw2023111601.data", {
-          responseType: "arraybuffer",
-        })
-          .then((rest) => rest.arrayBuffer())
-          .then((data) => renderImg(data));
+      async function btnClick() {
+        console.log("btn click");
+          try {
+            console.log("fetch data start.");
+            const response = await fetch("./raw2023111601.data", {
+              responseType: "arraybuffer",
+            });
+            console.log("fetch data finish.");
+            const data = await response.arrayBuffer();
+            renderImg(data);
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
       }
 
       document.body.onload = () => {
