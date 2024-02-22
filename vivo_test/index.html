@@ -1,65 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>TestCanvasWegbl</title>
-  </head>
-  <body>
-    <div>
-      <button id="btn">渲染</button>
-      <p>Canvas draw webgl canvas</p>
-      <canvas id="cavs" style="width: 300px; height: 168px"></canvas>
-      <p>Canvas webgl raw</p>
-      <div id="mdiv"></div>
-    </div>
-    <script type="module">
-      import YUVCanvas from "./yuv-canvas.js";
-      console.log("hans1")
-      const canvas = document.getElementById("cavs");
-      const myDiv = document.getElementById("mdiv");
-      const btn = document.getElementById("btn");
-      const renderImg = (data) => {
-        console.log("renderImg start")
-        const w = 256;
-        const h = 256;
-        const ctx = canvas.getContext("2d");
-        const tmp = YUVCanvas.draw(w, h, new Uint8Array(data), canvas);
-        const screenRatio = window.devicePixelRatio || 1;
-        console.log("hans2:", screenRatio);
-        canvas.width = Math.floor(300 * screenRatio);
-        canvas.height = Math.floor(168 * screenRatio);
-        ctx.save();
-        ctx.scale(screenRatio, screenRatio);
-        ctx.drawImage(tmp, 0, 0, w, h, 0, 0, 300, 168);
-        ctx.restore();
-
-        console.log(tmp);
-        myDiv.appendChild(tmp);
-        console.log("renderImg finish")
-      };
-
-      async function btnClick() {
-        console.log("btn click");
-        const size = 65536;
-        const array = new Array(size).fill(0);
-        renderImg(array);
-          // try {
-          //   console.log("fetch data start.");
-          //   const response = await fetch("./raw2023111601.data", {
-          //     responseType: "arraybuffer",
-          //   });
-          //   console.log("fetch data finish.");
-          //   console.log("arrayBuffer start.");
-          //   const data = await response.arrayBuffer();
-          //   console.log("arrayBuffer finish.");
-          //   renderImg(data);
-          // } catch (error) {
-          //   console.error("Error fetching data:", error);
-          // }
-      }
-
-      document.body.onload = () => {
-        document.getElementById("btn").onclick = btnClick;
-      };
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YUV WebGL Demo</title>
+</head>
+<body>
+  <canvas id="canvas" width="256" height="256"></canvas>
+  <script src="app.js"></script>
+</body>
 </html>
