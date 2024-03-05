@@ -16,6 +16,9 @@ function createTexture(gl, width, height, data)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     return texture;
 }
+
+function draw()
+{
 // 获取 canvas 元素并创建 WebGL 上下文
 const canvas = document.getElementById('canvas');
 const gl = canvas.getContext('webgl');
@@ -135,4 +138,4 @@ gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, textureV); gl.unifo
 
 // 绘制矩形 
 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
+}
