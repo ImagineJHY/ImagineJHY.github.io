@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover" />
+    <title>blackBoxTest 0</title>
+    <style type="text/css">
+      view {
+        display: block;
+      }
+      .touch-area {
+          width: 200px;
+          height: 200px;
+          background-color: aqua;
+        }
+    </style>
+    <script type="text/javascript">
+    function reloadPage()
+      {
+      window.location.reload()
+      }
+    function load(index)
+      {
+        window.location.href = "main.html?no=" + index;
+      }
+    </script>
+</head>
+<body>
+<view class="touch-area" id="touchArea"></view>
+<h3>View Count:</h3>
+<p>Touch Start: <span id="touchStartCount">0</span></p>
+<p>Touch Move: <span id="touchMoveCount">0</span></p>
+<p>Touch End: <span id="touchEndCount">0</span></p>
+
+<script>
+    const touchArea = document.getElementById('touchArea');
+    const touchStartCount = document.getElementById('touchStartCount');
+    const touchMoveCount = document.getElementById('touchMoveCount');
+    const touchEndCount = document.getElementById('touchEndCount');
+
+    let startCount = 0;
+    let moveCount = 0;
+    let endCount = 0;
+
+    touchArea.addEventListener('touchstart', () => {
+        startCount++;
+        touchStartCount.innerText = startCount;
+    });
+
+    touchArea.addEventListener('touchmove', () => {
+        moveCount++;
+        touchMoveCount.innerText = moveCount;
+    });
+
+    touchArea.addEventListener('touchend', () => {
+        endCount++;
+        touchEndCount.innerText = endCount;
+    });
+</script>
+</body>
+</html>
