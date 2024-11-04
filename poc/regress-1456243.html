@@ -1,0 +1,71 @@
+<!-- 
+    Flags:  --no-sandbox --incognito --disable-in-process-stack-traces
+-->
+
+<!-- 
+NOT PASS
+-->
+
+<html>
+<head>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec2 texCoord0;
+varying vec2 texCoord;
+void main() {
+    gl_Position = vPosition;
+    texCoord = texCoord0;
+}
+</script>
+<script id="fshader" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D tex;
+uniform float divisor;
+varying vec2 texCoord;
+void main() {
+    gl_FragData[0] = texture2DProj(tex, vec3(texCoord, divisor));
+}
+</script>
+<script type="text/javascript">
+function trigger() {
+var canvas = document.getElementById('canvas');
+var gl = canvas.getContext('webgl2');
+
+var vShader = gl.createShader(gl.VERTEX_SHADER);
+var vShaderScript = document.getElementById('vshader');
+gl.shaderSource(vShader, vShaderScript.text);
+gl.compileShader(vShader);
+
+var fShader = gl.createShader(gl.FRAGMENT_SHADER);
+var fShaderScript = document.getElementById('fshader');
+gl.shaderSource(fShader, fShaderScript.text);
+gl.compileShader(fShader);
+
+var program = gl.createProgram();
+gl.attachShader(program, vShader);
+gl.attachShader(program, fShader);
+
+gl.linkProgram(program);
+gl.useProgram(program);
+
+var buffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+gl.bindAttribLocation(program, 0.0, "texCoord0");
+gl.enableVertexAttribArray(0);
+
+var uloc = gl.getUniformLocation(program, "vPosition");
+gl.vertexAttribDivisor(uloc, gl.SYNC_FLAGS);
+gl.linkProgram(program);
+
+var rloc = gl.getAttribLocation(program, "texCoord0");
+gl.vertexAttribPointer(rloc, 1<<0, gl.UNSIGNED_BYTE, false, 9, 0x41424344);
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+</script>
+</head>
+<body onload="trigger();">
+<canvas id="canvas" width="1024" height="1024"></canvas>
+</body>
+</html>

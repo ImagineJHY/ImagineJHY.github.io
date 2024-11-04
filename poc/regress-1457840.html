@@ -1,0 +1,59 @@
+
+<!-- 
+	Flags: --no-sandbox --incognito --disable-in-process-stack-traces --use-gl=angle --use-angle=metal
+-->
+
+<html>
+<head>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec2 texCoord0;
+varying vec2 texCoord;
+void main() {
+    gl_Position = vPosition;
+    texCoord = texCoord0;
+}
+</script>
+<script id="fshader" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D tex;
+uniform float divisor;
+varying vec2 texCoord;
+void main() {
+    gl_FragData[0] = texture2DProj(tex, vec3(texCoord, divisor));
+}
+</script>
+<script type="text/javascript">
+function trigger() {
+var canvas = document.getElementById('canvas');
+var gl = canvas.getContext('webgl2');
+
+var vShader = gl.createShader(gl.VERTEX_SHADER);
+var vShaderScript = document.getElementById('vshader');
+gl.shaderSource(vShader, vShaderScript.text);
+gl.compileShader(vShader);
+
+var fShader = gl.createShader(gl.FRAGMENT_SHADER);
+var fShaderScript = document.getElementById('fshader');
+gl.shaderSource(fShader, fShaderScript.text);
+gl.compileShader(fShader);
+
+var program = gl.createProgram();
+gl.attachShader(program, vShader);
+gl.attachShader(program, fShader);
+
+gl.linkProgram(program);
+gl.useProgram(program);
+
+var ext = gl.getExtension('EXT_texture_compression_rgtc');
+gl.linkProgram(program);
+gl.useProgram(program);
+gl.drawArrays(10, ext.COMPRESSED_RGB_PVRTC_4BPPV1_IMG, gl.QUERY_RESULT);
+}
+
+</script>
+</head>
+<body onload="trigger();">
+<canvas id="canvas" width="1024" height="1024"></canvas>
+</body>
+</html>
