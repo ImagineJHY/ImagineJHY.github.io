@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                background-color: #e0e0e0;
+            }
+            .content {
+                text-align: center;
+                color: #444;
+            }
+            .inner-frame {
+                width: 48%;
+                height: 100%;
+                border: 2px solid #999;
+                display: inline-block;
+                vertical-align: top;
+            }
+            .inner-frame img, .inner-frame video {
+                display: block;
+                margin: 10px auto;
+                max-width: 90%;
+            }
+            .inner-frame p {
+                padding: 10px;
+                text-align: justify;
+            }
+        </style>
+    </head>
+    <body>
+        <div class='content'>
+            <p>This is the nested iframe with some text content.</p>
+            <iframe class=\'inner-frame\' src="test_long_screenshots_inner_frame1.html"></iframe>
+            <iframe class=\'inner-frame\' src="test_long_screenshots_inner_frame2.html"></iframe>
+            <p>This is the nested iframe with some text content.</p>
+            <p>This is the nested iframe with some text content.</p>
+            <p>This is the nested iframe with some text content.</p>
+        </div>
+    </body>
+</html>
