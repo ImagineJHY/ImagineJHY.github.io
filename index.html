@@ -6,15 +6,26 @@
 </head>
 <body>
  <p>Hellp World</p>
-<canvas id="canvas" width="398" height="298"></canvas>
-<script>
- function main() {
- const canvas = document.querySelector("#canvas");
-  console.log("1");
-  const gl = canvas.getContext("webgl2", { preserveDrawingBuffer: true });
- console.log(gl);
- }
- main()
-</script>
-<video playsinline="" muted="" autoplay="" id="video" width="460" crossorigin="anonymous" src="https://beta-h5.xverse.cn/bug-report/sample_25fps.mp4" style="position: absolute; top: 0px; right: 1px;"></video></body><!--
---></html>
+     <video id="myVideo" controls width="640" height="360">
+        Your browser does not support the video tag.
+    </video>
+
+    <script>
+        // 假设你有一个函数来动态获取视频的 URL
+        function getVideoSrc() {
+            // 这里你可以从服务器、API 或其他地方获取视频的 URL
+            // 例如，返回一个固定的视频 URL
+            return "https://www.w3schools.com/html/mov_bbb.mp4";
+        }
+
+        // 获取 video 元素
+        const videoElement = document.getElementById('myVideo');
+
+        // 动态设置视频的 src
+        videoElement.src = getVideoSrc();
+
+        // 加载视频
+        videoElement.load();
+    </script>
+</body>
+</html>
