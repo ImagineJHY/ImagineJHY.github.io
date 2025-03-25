@@ -5,7 +5,7 @@
 <link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet">
 </head>
      <style>
-        #myVideo {
+        #object-fit {
 /*             visibility: hidden; /* 初始隐藏 */ */
         }
         /* 加载提示样式 */
@@ -15,9 +15,10 @@
         }
     </style>
 <body>
- <p>Hellp World!!!6</p>
+ <p>Hellp World!!!7</p>
      <div id="loading">Loading video, please wait...</div>
-     <video id="myVideo" controls width="640" height="360">
+     <embed class="object-fit" id="myEmbed" type="application/x-wechat-component" embed-id="1" embed-type="video"></embed>
+     <video class="object-fit" id="myVideo" controls width="640" height="360">
         Your browser does not support the video tag.
     </video>
    <video controls loop autoplay muted width="200" height="100">
@@ -37,7 +38,7 @@
         }
 
         // 获取 video 元素和 loading 提示元素
-        const videoElement = document.getElementById('myVideo');
+        const videoElement = document.getElementById('object-fit');
         const loadingElement = document.getElementById('loading');
 
         // 动态获取视频 src
