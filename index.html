@@ -15,7 +15,7 @@
         }
     </style>
 <body>
- <p>Hellp World!!!7</p>
+ <p>Hellp World!!!8</p>
      <div id="loading">Loading video, please wait...</div>
      <embed class="object-fit" id="myEmbed" type="application/x-wechat-component" embed-id="1" embed-type="video"></embed>
      <video class="object-fit" id="myVideo" controls width="640" height="360">
@@ -38,7 +38,8 @@
         }
 
         // 获取 video 元素和 loading 提示元素
-        const videoElement = document.getElementById('object-fit');
+        const videoElement = document.getElementById('myVideo');
+          const embedElement = document.getElementById('myEmbed')
         const loadingElement = document.getElementById('loading');
 
         // 动态获取视频 src
