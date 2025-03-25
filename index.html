@@ -4,6 +4,17 @@
 <title>WebGL - load obj - cube</title>
 <link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet">
 </head>
+     <style>
+        /* 初始隐藏 video 元素 */
+        #myVideo {
+            display: none;
+        }
+        /* 加载提示样式 */
+        #loading {
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
 <body>
  <p>Hellp World!!!</p>
      <video id="myVideo" controls width="640" height="360">
@@ -11,21 +22,35 @@
     </video>
 
     <script>
-        // 假设你有一个函数来动态获取视频的 URL
+        // 模拟动态获取视频的 src
         function getVideoSrc() {
-            // 这里你可以从服务器、API 或其他地方获取视频的 URL
-            // 例如，返回一个固定的视频 URL
-            return "https://www.w3schools.com/html/mov_bbb.mp4";
+            return new Promise((resolve) => {
+                // 模拟一个 3 秒的延迟，模拟真实的网络请求
+                setTimeout(() => {
+                    // 返回一个视频 URL
+                    resolve("https://www.w3schools.com/html/mov_bbb.mp4");
+                }, 3000);
+            });
         }
 
-        // 获取 video 元素
+        // 获取 video 元素和 loading 提示元素
         const videoElement = document.getElementById('myVideo');
+        const loadingElement = document.getElementById('loading');
 
-        // 动态设置视频的 src
-        videoElement.src = getVideoSrc();
+        // 动态获取视频 src
+        getVideoSrc().then((src) => {
+            // 设置视频的 src
+            videoElement.src = src;
 
-        // 加载视频
-        videoElement.load();
+            // 加载视频
+            videoElement.load();
+
+            // 隐藏 loading 提示
+            loadingElement.style.display = 'none';
+
+            // 显示 video 元素
+            videoElement.style.display = 'block';
+        });
     </script>
 </body>
 </html>
