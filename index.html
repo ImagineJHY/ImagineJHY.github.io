@@ -5,6 +5,9 @@
 <link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet">
 </head>
      <style>
+        #myVideo {
+            visibility: hidden; /* 初始隐藏 */
+        }
         /* 加载提示样式 */
         #loading {
             font-size: 18px;
@@ -14,7 +17,7 @@
 <body>
  <p>Hellp World!!!1</p>
      <div id="loading">Loading video, please wait...</div>
-     <video id="myVideo" controls width="640" height="360" hidden>
+     <video id="myVideo" controls width="640" height="360">
         Your browser does not support the video tag.
     </video>
 
@@ -38,7 +41,8 @@
         getVideoSrc().then((src) => {
             // 设置视频的 src
             videoElement.src = src;
-             videoElement.removeAttribute('hidden');
+             div.style.visibility = 'visible'; // 显示元素
+             // videoElement.removeAttribute('hidden');
 
             // 加载视频
             videoElement.load();
