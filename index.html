@@ -15,7 +15,7 @@
         }
     </style>
 <body>
- <p>Hellp World!!!2</p>
+ <p>Hellp World!!!3</p>
      <div id="loading">Loading video, please wait...</div>
      <video id="myVideo" controls width="640" height="360">
         Your browser does not support the video tag.
@@ -41,7 +41,7 @@
         getVideoSrc().then((src) => {
             // 设置视频的 src
             videoElement.src = src;
-             div.style.visibility = 'visible'; // 显示元素
+             videoElement.style.visibility = 'visible'; // 显示元素
              // videoElement.removeAttribute('hidden');
 
             // 加载视频
