@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microphone Pause/Resume</title>
+</head>
+<body>
+    <h1>Microphone Pause/Resume</h1>
+    <!-- 麦克风控制按钮 -->
+    <button id="micControlBtn">Start Microphone</button>
+
+    <script>
+        // 获取 DOM 元素
+        const micControlBtn = document.getElementById('micControlBtn');
+
+        let mediaStream; // 用于存储麦克风流
+        let isPaused = false; // 标记麦克风是否暂停
+
+        // 控制按钮点击事件
+        micControlBtn.addEventListener('click', async () => {
+            if (!mediaStream) {
+                // 如果麦克风未开启，则申请权限并开启麦克风
+                try {
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    micControlBtn.textContent = 'Pause Microphone';
+                    isPaused = false;
+                    console.log('Microphone started');
+                } catch (error) {
+                    console.error('Error accessing microphone:', error);
+                }
+            } else {
+                if (isPaused) {
+                    // 如果麦克风已暂停，则恢复麦克风
+                    mediaStream.getAudioTracks().forEach(track => (track.enabled = true));
+                    micControlBtn.textContent = 'Pause Microphone';
+                    isPaused = false;
+                    console.log('Microphone resumed');
+                } else {
+                    // 如果麦克风正在运行，则暂停麦克风
+                    mediaStream.getAudioTracks().forEach(track => (track.enabled = false));
+                    micControlBtn.textContent = 'Resume Microphone';
+                    isPaused = true;
+                    console.log('Microphone paused');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
