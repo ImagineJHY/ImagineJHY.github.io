@@ -1,4 +1,4 @@
-:root:root {
+/* :root:root {
     --primary-color: #2753e3;
     --primary-color-1: #f0f6ff;
     --primary-color-2: #cfe0ff;
@@ -3509,7 +3509,7 @@ a.adm-list-item:active:not(.adm-list-item-disabled):after {
     border: 1px solid var(--border-color);
     -webkit-box-sizing: border-box;
     box-sizing: border-box
-}
+} */
 
 .adm-tag-round {
     border-radius: 100px
