@@ -1,0 +1,77 @@
+html
+复制
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Window Properties Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Window Properties Checker</h1>
+    <p>This page lists all properties of the <code>window</code> object and checks if they are read-only.</p>
+    <table id="propertiesTable">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Is Read-Only?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be populated by JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to check if a property is read-only
+        function isReadOnly(obj, prop) {
+            const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+            return descriptor && !descriptor.writable;
+        }
+
+        // Function to populate the table with window properties
+        function populateTable() {
+            const tableBody = document.querySelector('#propertiesTable tbody');
+
+            for (const prop in window) {
+                const row = document.createElement('tr');
+
+                const propCell = document.createElement('td');
+                propCell.textContent = prop;
+                row.appendChild(propCell);
+
+                const readOnlyCell = document.createElement('td');
+                readOnlyCell.textContent = isReadOnly(window, prop) ? 'Yes' : 'No';
+                row.appendChild(readOnlyCell);
+
+                tableBody.appendChild(row);
+            }
+        }
+
+        // Populate the table when the page loads
+        window.onload = populateTable;
+    </script>
+</body>
+</html>
