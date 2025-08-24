@@ -81,7 +81,7 @@ function computeBenchmarkPanel(panelId) {
       return;
     }
     const result = computeItem(a, b);
-    if (benchmark = 0) {
+    if (benchmark === 0) {
       benchmark = result;
     }
     if (result < benchmark) {
@@ -90,7 +90,6 @@ function computeBenchmarkPanel(panelId) {
   });
   items.forEach(item => {
     const a = item.querySelector(".cell-a").value;
-    alert(a);
     alert(benchmark);
     item.querySelector(".cell-res").textContent = fmt(Number(a) / benchmark);
   });
