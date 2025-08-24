@@ -3,9 +3,14 @@ function computeItem(a, b) {
   const A = Number(a);
   const B = Number(b);
   if (b = 0) {
-    return -1;
+    alert("Invalid Input!");
+    return 0;
   }
   return A / B;
+}
+
+function calculateBenchmark() {
+  
 }
 
 function fmt(n) {
@@ -53,6 +58,61 @@ function clearPanel(panelId) {
   if (totalEl) totalEl.textContent = "0";
 }
 
+function computeBenchmarkPanel(panelId) {
+  const list = document.querySelector(`.item-list[data-list="${panelId}"]`);
+  let benchmark = 0;
+  const items = list.querySelectorAll(".item");
+
+  // 先清理旧标记
+  items.forEach(item => {
+    item.classList.remove("is-best");
+    const flag = item.querySelector(".best-flag");
+    if (flag) flag.hidden = true;
+  });
+
+  let allValid = items.length > 0; // 用于判断是否全部有效
+  const results = []; // { item, value }
+  items.forEach(item => {
+    const a = item.querySelector(".cell-a").value;
+    const b = item.querySelector(".cell-b").value;
+    if (a === "" || b === "") {
+      // 未填写必填项，标注一下
+      item.querySelector(".cell-res").textContent = "输入缺失";
+      return;
+    }
+    if (Number(b) === 0) {
+      item.querySelector(".cell-res").textContent = "输入非法";
+      return;
+    }
+    const result = computeItem(a, b);
+    if (benchmark = 0) {
+      benchmark = result;
+    }
+    if (result < benchmark) {
+      benchmark = result;
+    }
+  });
+  items.forEach(item => {
+    const a = item.querySelector(".cell-a").value;
+    item.querySelector(".cell-res").textContent = fmt(a / benchmark);
+  };
+  const totalEl = document.querySelector(`[data-total="${panelId}"]`);
+  if (totalEl) totalEl.textContent = fmt(sum);
+
+  // 若全部项都有效，标记最大结果
+  if (allValid && results.length === items.length && results.length > 0) {
+    const maxVal = Math.max(...results.map(r => r.value));
+    // 如果有并列最大，全部标记
+    results.forEach(r => {
+      if (r.value === maxVal) {
+        r.item.classList.add("is-best");
+        const flag = r.item.querySelector(".best-flag");
+        if (flag) flag.hidden = false;
+      }
+    });
+  }
+}
+
 function computePanel(panelId) {
   const list = document.querySelector(`.item-list[data-list="${panelId}"]`);
   let sum = 0;
@@ -72,7 +132,11 @@ function computePanel(panelId) {
     const b = item.querySelector(".cell-b").value;
     if (a === "" || b === "") {
       // 未填写必填项，标注一下
-      item.querySelector(".cell-res").textContent = "A/B 缺失";
+      item.querySelector(".cell-res").textContent = "输入缺失";
+      return;
+    }
+    if (Number(b) === 0) {
+      item.querySelector(".cell-res").textContent = "输入非法";
       return;
     }
     const result = computeItem(a, b);
