@@ -204,6 +204,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    const computeBenchmarBtm = e.target.closest(".computeBenchmark");
+    if (computeBenchmarBtm) {
+      const panelId = computeBenchmarBtm.dataset.panel;
+      computeBenchmarkPanel(panelId);
+      return;
+    }
+
     const clearBtn = e.target.closest(".clear-list");
     if (clearBtn) {
       const panelId = clearBtn.dataset.panel;
