@@ -41,6 +41,7 @@ function addItem(panelId, aVal, bVal) {
       <span class="pill" title="该项计算结果">结果：<span class="cell-res">未计算</span></span>
       <button class="btn danger del-item" type="button" title="删除此项">删除</button>
     </div>
+    <span class="best-flag" title="本页最大结果" hidden>✅</span>
   `;
   list.appendChild(li);
 }
@@ -70,6 +71,21 @@ function computePanel(panelId) {
   });
   const totalEl = document.querySelector(`[data-total="${panelId}"]`);
   if (totalEl) totalEl.textContent = fmt(sum);
+  const totalEl = document.querySelector([data-total="${panelId}"]);
+  if (totalEl) totalEl.textContent = fmt(sum);
+
+  // 若全部项都有效，标记最大结果
+  if (allValid && results.length === items.length && results.length > 0) {
+    const maxVal = Math.max(...results.map(r => r.value));
+    // 如果有并列最大，全部标记
+    results.forEach(r => {
+      if (r.value === maxVal) {
+        r.item.classList.add("is-best");
+        const flag = r.item.querySelector(".best-flag");
+        if (flag) flag.hidden = false;
+      }
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
