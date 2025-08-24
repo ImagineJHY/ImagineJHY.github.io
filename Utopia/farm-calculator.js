@@ -90,7 +90,7 @@ function computeBenchmarkPanel(panelId) {
   });
   items.forEach(item => {
     const a = item.querySelector(".cell-a").value;
-    item.querySelector(".cell-res").textContent = fmt(a / benchmark);
+    item.querySelector(".cell-res").textContent = fmt(Number(a) / benchmark);
   });
   const totalEl = document.querySelector(`[data-total="${panelId}"]`);
   if (totalEl) totalEl.textContent = fmt(benchmark);
