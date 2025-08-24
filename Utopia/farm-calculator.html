@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Utopia Farm-Calculator</title>
+  <style>
+    :root {
+      --primary: #1f6feb;
+      --border: #e2e8f0;
+      --bg: #ffffff;
+      --muted: #6b7280;
+      --danger: #dc2626;
+      --ok: #065f46;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 24px;
+      font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+      background: #f8fafc; color: #111827;
+    }
+    .app {
+      max-width: 960px; margin: 0 auto; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,.06);
+    }
+    header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: #fbfdff;
+    }
+    header h1 { margin: 0; font-size: 18px; }
+    .tabs {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .tab-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 8px 12px; border-radius: 8px; cursor: pointer;
+      font-size: 14px; color: #374151;
+    }
+    .tab-btn[aria-selected="true"] {
+      background: #eef5ff; color: var(--primary);
+      border-color: #b9d2ff;
+    }
+    .panel {
+      display: none; padding: 20px;
+    }
+    .panel.active { display: block; }
+    .form-row {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+      gap: 10px; align-items: end; margin-bottom: 12px;
+    }
+    .field label {
+      display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;
+    }
+    .field input {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 14px;
+    }
+    .btn {
+      padding: 10px 14px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border);
+      background: #fff; font-size: 14px;
+    }
+    .btn.primary {
+      background: var(--primary); border-color: var(--primary); color: #fff;
+    }
+    .btn.ghost { background: #fff; }
+    .btn.danger { background: #fff5f5; border-color: #fecaca; color: var(--danger); }
+    .bar {
+      display: flex; gap: 8px; align-items: center; margin: 14px 0 8px;
+      flex-wrap: wrap;
+    }
+    .muted { color: var(--muted); font-size: 13px; }
+    ul.item-list {
+      list-style: none; padding: 0; margin: 0; display: grid; gap: 10px;
+    }
+    .item {
+      border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+      display: grid; gap: 10px;
+    }
+    .item .row {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) 120px auto;
+      gap: 10px; align-items: center;
+    }
+    .pill {
+      display: inline-block; padding: 4px 8px; border-radius: 999px;
+      background: #ecfdf5; color: var(--ok); font-size: 12px; border: 1px solid #bbf7d0;
+    }
+    .sum {
+      margin-top: 12px; padding: 10px 12px; border-radius: 10px;
+      background: #f6faff; border: 1px solid #dbeafe; color: #0b3b8f;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .help {
+      font-size: 12px; color: var(--muted); margin-top: 4px;
+    }
+    @media (max-width: 720px) {
+      .form-row { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
+      .item .row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>计算列表</h1>
+      <div class="tabs" role="tablist" aria-label="页面栏">
+        <button class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-1" id="tab-btn-1" data-tab-target="tab-1">页面栏 1</button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-2" id="tab-btn-2" data-tab-target="tab-2">页面栏 2</button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-3" id="tab-btn-3" data-tab-target="tab-3">页面栏 3</button>
+      </div>
+    </header>
+
+    <section class="panel active" id="tab-1" role="tabpanel" aria-labelledby="tab-btn-1">
+      <h2>农田计算器</h2>
+      <div class="help">添加项后点击“计算本页”得到结果</div>
+      <div class="form-row">
+        <div class="field">
+          <label for="a-1">收入提升</label>
+          <input id="a-1" type="number" step="any" placeholder="如 2.5" />
+        </div>
+        <div class="field">
+          <label for="b-1">花费</label>
+          <input id="b-1" type="number" step="any" placeholder="如 10" />
+        </div>
+        <button class="btn primary add-item" data-panel="tab-1" type="button">添加到列表</button>
+      </div>
+
+      <div class="bar">
+        <button class="btn primary compute" data-panel="tab-1" type="button">计算本页</button>
+        <button class="btn ghost clear-list" data-panel="tab-1" type="button">清空本页</button>
+        <span class="muted">公式：结果 = A / B</span>
+      </div>
+
+      <ul class="item-list" data-list="tab-1"></ul>
+
+      <div class="sum">
+        <strong>本页合计：</strong>
+        <span data-total="tab-1">0</span>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-2" role="tabpanel" aria-labelledby="tab-btn-2">
+      <h2>牧场计算器</h2>
+      <div class="help">添加项后点击“计算本页”得到结果</div>
+      <div class="form-row">
+        <div class="field">
+          <label for="a-2">收入提升</label>
+          <input id="a-2" type="number" step="any" placeholder="如 3" />
+        </div>
+        <div class="field">
+          <label for="b-2">花费</label>
+          <input id="b-2" type="number" step="any" placeholder="如 8" />
+        </div>
+        <button class="btn primary add-item" data-panel="tab-2" type="button">添加到列表</button>
+      </div>
+      <div class="bar">
+        <button class="btn primary compute" data-panel="tab-2" type="button">计算本页</button>
+        <button class="btn ghost clear-list" data-panel="tab-2" type="button">清空本页</button>
+        <span class="muted">公式：结果 = A / B</span>
+      </div>
+      <ul class="item-list" data-list="tab-2"></ul>
+      <div class="sum">
+        <strong>本页合计：</strong>
+        <span data-total="tab-2">0</span>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-3" role="tabpanel" aria-labelledby="tab-btn-3">
+      <h2>果园计算器</h2>
+      <div class="help">添加项后点击“计算本页”得到结果</div>
+      <div class="form-row">
+        <div class="field">
+          <label for="a-3">收入提升</label>
+          <input id="a-3" type="number" step="any" placeholder="如 1.2" />
+        </div>
+        <div class="field">
+          <label for="b-3">花费</label>
+          <input id="b-3" type="number" step="any" placeholder="如 5" />
+        </div>
+        <button class="btn primary add-item" data-panel="tab-3" type="button">添加到列表</button>
+      </div>
+      <div class="bar">
+        <button class="btn primary compute" data-panel="tab-3" type="button">计算本页</button>
+        <button class="btn ghost clear-list" data-panel="tab-3" type="button">清空本页</button>
+        <span class="muted">公式：结果 = A/B</span>
+      </div>
+      <ul class="item-list" data-list="tab-3"></ul>
+      <div class="sum">
+        <strong>本页合计：</strong>
+        <span data-total="tab-3">0</span>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
