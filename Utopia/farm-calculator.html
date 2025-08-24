@@ -99,6 +99,19 @@
       .form-row { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
       .item .row { grid-template-columns: 1fr 1fr; }
     }
+    .item { position: relative; }
+    .best-flag {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 18px;
+    line-height: 1;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,.2));
+    }
+    .item.is-best {
+    border-color: #86efac !important;              / 绿色强调边框 /
+    box-shadow: 0 10px 28px rgba(16,185,129,.18);   / 柔和高亮阴影 */
+    }
   </style>
 </head>
 <body>
