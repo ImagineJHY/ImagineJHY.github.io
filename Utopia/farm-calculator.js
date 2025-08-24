@@ -9,10 +9,6 @@ function computeItem(a, b) {
   return A / B;
 }
 
-function calculateBenchmark() {
-  
-}
-
 function fmt(n) {
   // 统一格式化为最多 6 位小数，去掉多余 0
   const s = Number(n).toFixed(6);
@@ -95,7 +91,7 @@ function computeBenchmarkPanel(panelId) {
   items.forEach(item => {
     const a = item.querySelector(".cell-a").value;
     item.querySelector(".cell-res").textContent = fmt(a / benchmark);
-  };
+  });
   const totalEl = document.querySelector(`[data-total="${panelId}"]`);
   if (totalEl) totalEl.textContent = fmt(sum);
 
