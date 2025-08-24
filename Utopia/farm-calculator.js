@@ -81,6 +81,7 @@ function computeBenchmarkPanel(panelId) {
       return;
     }
     const result = computeItem(a, b);
+    results.push({ item, value: Number(result) });
     if (benchmark === 0) {
       benchmark = result;
     }
@@ -97,10 +98,10 @@ function computeBenchmarkPanel(panelId) {
 
   // 若全部项都有效，标记最大结果
   if (allValid && results.length === items.length && results.length > 0) {
-    const maxVal = Math.max(...results.map(r => r.value));
+    const minVal = Math.min(...results.map(r => r.value));
     // 如果有并列最大，全部标记
     results.forEach(r => {
-      if (r.value === maxVal) {
+      if (r.value === minVal) {
         r.item.classList.add("is-best");
         const flag = r.item.querySelector(".best-flag");
         if (flag) flag.hidden = false;
@@ -136,6 +137,7 @@ function computePanel(panelId) {
       return;
     }
     const result = computeItem(a, b);
+    results.push({ item, value: Number(result) });
     sum += Number(result);
     item.querySelector(".cell-res").textContent = fmt(result);
   });
@@ -147,6 +149,8 @@ function computePanel(panelId) {
     const maxVal = Math.max(...results.map(r => r.value));
     // 如果有并列最大，全部标记
     results.forEach(r => {
+      console.log(maxVal);
+      console.log(r.value);
       if (r.value === maxVal) {
         r.item.classList.add("is-best");
         const flag = r.item.querySelector(".best-flag");
