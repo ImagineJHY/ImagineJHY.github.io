@@ -57,6 +57,16 @@ function computePanel(panelId) {
   const list = document.querySelector(`.item-list[data-list="${panelId}"]`);
   let sum = 0;
   const items = list.querySelectorAll(".item");
+
+  // 先清理旧标记
+  items.forEach(item => {
+    item.classList.remove("is-best");
+    const flag = item.querySelector(".best-flag");
+    if (flag) flag.hidden = true;
+  });
+
+  let allValid = items.length > 0; // 用于判断是否全部有效
+  const results = []; // { item, value }
   items.forEach(item => {
     const a = item.querySelector(".cell-a").value;
     const b = item.querySelector(".cell-b").value;
