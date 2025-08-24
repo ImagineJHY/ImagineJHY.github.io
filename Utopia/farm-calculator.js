@@ -93,7 +93,7 @@ function computeBenchmarkPanel(panelId) {
     item.querySelector(".cell-res").textContent = fmt(a / benchmark);
   });
   const totalEl = document.querySelector(`[data-total="${panelId}"]`);
-  if (totalEl) totalEl.textContent = fmt(sum);
+  if (totalEl) totalEl.textContent = fmt(benchmark);
 
   // 若全部项都有效，标记最大结果
   if (allValid && results.length === items.length && results.length > 0) {
