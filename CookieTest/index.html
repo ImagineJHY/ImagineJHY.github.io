@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cookie 自动登录 Demo（纯前端）</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; }
+    .card { max-width: 420px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    .row { margin: 8px 0; }
+    input { width: 100%; padding: 8px; }
+    button { padding: 8px 12px; }
+    #homeView, #loginView { display: none; }
+    .muted { color: #666; font-size: 12px; }
+    code { background: #f6f8fa; padding: 0 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h2>Cookie 自动登录 Demo</h2>
+
+  <div id="loginView" class="card">
+    <div class="row"><strong>示例登录</strong></div>
+    <div class="row">
+      <label>用户名</label>
+      <input id="u" value="test" autocomplete="username">
+    </div>
+    <div class="row">
+      <label>密码</label>
+      <input id="p" type="password" value="123456" autocomplete="current-password">
+    </div>
+    <div class="row">
+      <button id="loginBtn">登录</button>
+    </div>
+    <div class="row muted">提示：用户名 <code>test</code>，密码 <code>123456</code></div>
+  </div>
+
+  <div id="homeView" class="card">
+    <div class="row"><strong>主页（已登录）</strong></div>
+    <div class="row">欢迎回来！下面显示当前 Cookie：</div>
+    <div class="row"><code id="cookieText"></code></div>
+    <div class="row">
+      <button id="logoutBtn">退出登录</button>
+    </div>
+  </div>
+
+  <script>
+    // 为了让 Cookie 仅作用于当前目录，使用 Path=当前目录（repos 下更安全）
+    // 若你希望对整个域生效，把 cookiePath 改为 '/'。
+    const cookiePath = location.pathname.replace(/[^/]*$/, '') || '/';
+    const cookieName = 'session';
+
+    function setCookie(name, value, maxAgeSec) {
+      // 在 GitHub Pages（HTTPS）上，不需要 SameSite=None；默认 Lax 即可。
+      // 如果将来要在第三方 iframe 中使用，需要加 "SameSite=None; Secure"。
+      document.cookie = [
+        `${name}=${encodeURIComponent(value)}`,
+        `Path=${cookiePath}`,
+        `Max-Age=${maxAgeSec}`,
+        `SameSite=Lax`
+        // 'Secure' // 仅在需要时添加；GitHub Pages 是 https，加了也可
+      ].join('; ');
+    }
+
+    function deleteCookie(name) {
+      document.cookie = `${name}=; Path=${cookiePath}; Max-Age=0; SameSite=Lax`;
+    }
+
+    function getCookie(name) {
+      const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+
+    function show(view) {
+      document.getElementById('loginView').style.display = view === 'login' ? 'block' : 'none';
+      document.getElementById('homeView').style.display  = view === 'home'  ? 'block' : 'none';
+    }
+
+    function onLogin() {
+      const u = document.getElementById('u').value.trim();
+      const p = document.getElementById('p').value;
+      if (u === 'test' && p === '123456') {
+        // 简单生成一个“令牌”
+        const token = 'demo-' + Math.random().toString(36).slice(2);
+        setCookie(cookieName, token, 7 * 24 * 3600); // 7 天
+        enterHome();
+      } else {
+        alert('用户名或密码错误');
+      }
+    }
+
+    function enterHome() {
+      show('home');
+      document.getElementById('cookieText').textContent = document.cookie || '(无 Cookie)';
+    }
+
+    function init() {
+      document.getElementById('loginBtn').addEventListener('click', onLogin);
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        deleteCookie(cookieName);
+        show('login');
+      });
+
+      // 自动登录：如果有 session Cookie，直接进入主页
+      const session = getCookie(cookieName);
+      if (session) {
+        enterHome();
+      } else {
+        show('login');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
