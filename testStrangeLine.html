@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>最简单的网页示例</title>
+  <style>
+    /* 基础：让 <view> 在网页中像块级元素一样显示，并去掉默认边距 */
+    html, body { height: 100%; margin: 0; }
+    view { display: block; }
+
+    /* 你要求的 CSS 定义 */
+    .overflow-auto {
+      overflow: auto;
+    }
+    .flex-1 {
+      flex: 1;
+    }
+    .flex-col {
+      flex-direction: column;
+    }
+    .flex {
+      display: flex;
+    }
+    .h-screen {
+      height: 100vh;
+    }
+
+    /* 仅为展示方便的附加样式，可删 */
+    #fullView {
+      width: 100vw;            /* 浏览器宽度 */
+      min-height: 200px;       /* 给点高度以便能看到区域 */
+      background: #f5f7fa;
+      border: 1px dashed #cbd5e1;
+    }
+    .bottom {
+      padding: 12px;
+      background: #eef2ff;
+      border-top: 1px solid #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <view class="flex flex-col h-screen">
+    <view class="flex flex-col flex-1 overflow-auto">
+      <!-- 原结构里的 {{deviceWidth}} 在纯 HTML 中不会生效，已用 CSS 设为 100vw 以便展示 -->
+      <view id="fullView" style="width:{{deviceWidth}}px;"></view>
+    </view>
+    <view class="bottom">
+      底部要有一个view
+    </view>
+  </view>
+</body>
+</html>
