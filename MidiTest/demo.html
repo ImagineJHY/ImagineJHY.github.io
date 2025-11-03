@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Android MIDI 简易 Demo（WebAudio 回退 + WebMIDI 试探）</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 16px; }
+    h1 { font-size: 18px; margin-bottom: 8px; }
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    button { padding: 10px 14px; font-size: 16px; }
+    .status { font-size: 14px; color: #333; margin: 6px 0 12px; }
+    .keys { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .key { user-select: none; -webkit-user-select: none; padding: 14px 0; background: #fff; border: 1px solid #ccc; border-radius: 6px; text-align: center; font-size: 14px; }
+    .key:active { background: #e9f5ff; border-color: #66afe9; }
+  </style>
+</head>
+<body>
+  <h1>Android MIDI 简易 Demo</h1>
+  <div class="controls">
+    <button id="startBtn">启用音频</button>
+    <button id="connectMIDIBtn">连接 MIDI（若支持）</button>
+  </div>
+  <div id="status" class="status">状态：等待启用音频</div>
+
+  <div id="keys" class="keys"></div>
+
+  <script>
+    // 基础合成器（WebAudio）与 MIDI 处理
+    let audioCtx = null;
+    let masterGain = null;
+    const activeNotes = new Map(); // midi -> { osc, gain }
+
+    function initAudio() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 0.2;
+      masterGain.connect(audioCtx.destination);
+      setStatus('音频已启用');
+    }
+
+    async function resumeAudio() {
+      initAudio();
+      if (audioCtx.state !== 'running') {
+        try { await audioCtx.resume(); } catch(e){}
+      }
+    }
+
+    function midiToFreq(m) {
+      return 440 * Math.pow(2, (m - 69) / 12);
+    }
+
+    function noteOn(midi, velocity = 100) {
+      if (!audioCtx) initAudio();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      // 基本音色与包络
+      osc.type = 'sine'; // 可换 'square'/'sawtooth'/'triangle'
+      osc.frequency.value = midiToFreq(midi);
+
+      const vel = Math.max(1, Math.min(127, velocity));
+      const peak = (vel / 127) * 0.5;   // 峰值
+      const sustain = peak * 0.6;       // 延音
+      const attack = 0.01;
+      const decay = 0.12;
+      const release = 0.25;
+
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(peak, now + attack);
+      gain.gain.exponentialRampToValueAtTime(sustain, now + attack + decay);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(now);
+
+      activeNotes.set(midi, { osc, gain, release });
+    }
+
+    function noteOff(midi) {
+      const n = activeNotes.get(midi);
+      if (!n || !audioCtx) return;
+      const now = audioCtx.currentTime;
+      const { osc, gain, release } = n;
+
+      gain.gain.cancelScheduledValues(now);
+      // 渐弱释放
+      gain.gain.setTargetAtTime(0.0001, now, release / 3);
+      setTimeout(() => {
+        try { osc.stop(); } catch(e){}
+        try { osc.disconnect(); gain.disconnect(); } catch(e){}
+      }, Math.max(100, Math.floor(release * 1000)));
+      activeNotes.delete(midi);
+    }
+
+    // Web MIDI（若浏览器支持）
+    let midiAccess = null;
+    function connectMIDI() {
+      if (!navigator.requestMIDIAccess) {
+        setStatus('当前浏览器不支持 Web MIDI（Android 上常见）。可用屏幕琴键演奏。');
+        return;
+      }
+      navigator.requestMIDIAccess({ sysex: false }).then(access => {
+        midiAccess = access;
+        const inputs = Array.from(midiAccess.inputs.values());
+        if (inputs.length === 0) {
+          setStatus('已启用 Web MIDI，但未检测到输入设备。');
+          return;
+        }
+        const input = inputs[0]; // 简化：选第一个输入
+        input.onmidimessage = onMIDIMessage;
+        setStatus(`MIDI 输入已连接：${input.name}`);
+      }).catch(err => {
+        setStatus('请求 Web MIDI 失败：' + err);
+      });
+    }
+
+    function onMIDIMessage(msg) {
+      const [status, data1, data2] = msg.data;
+      const cmd = status & 0xF0;
+      // Note On/Off 处理
+      if (cmd === 0x90 && data2 > 0) {
+        noteOn(data1, data2);
+      } else if (cmd === 0x80 || (cmd === 0x90 && data2 === 0)) {
+        noteOff(data1);
+      }
+    }
+
+    // UI 和事件
+    const names = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+    function noteName(midi) {
+      const n = names[midi % 12];
+      const oct = Math.floor(midi / 12) - 1;
+      return `${n}${oct}`;
+    }
+
+    function setStatus(text) {
+      document.getElementById('status').textContent = '状态：' + text;
+    }
+
+    function buildKeys() {
+      const container = document.getElementById('keys');
+      // C4(60) 到 C5(72) 共 13 个音
+      for (let m = 60; m <= 72; m++) {
+        const btn = document.createElement('button');
+        btn.className = 'key';
+        btn.textContent = noteName(m);
+        btn.dataset.midi = m;
+        // 触摸与鼠标事件
+        const down = e => {
+          e.preventDefault();
+          resumeAudio();
+          noteOn(m, 110);
+        };
+        const up = e => {
+          e.preventDefault();
+          noteOff(m);
+        };
+        btn.addEventListener('touchstart', down, { passive: false });
+        btn.addEventListener('touchend', up, { passive: false });
+        btn.addEventListener('touchcancel', up, { passive: false });
+        btn.addEventListener('mousedown', down);
+        btn.addEventListener('mouseup', up);
+        btn.addEventListener('mouseleave', up);
+        container.appendChild(btn);
+      }
+    }
+
+    // 按钮绑定
+    document.getElementById('startBtn').addEventListener('click', async () => {
+      await resumeAudio();
+    });
+    document.getElementById('connectMIDIBtn').addEventListener('click', connectMIDI);
+
+    // 初始化
+    buildKeys();
+  </script>
+</body>
+</html>
