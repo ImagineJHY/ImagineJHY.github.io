@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>等待跳转</title>
+</head>
+<body>
+  <p>将在 <span id="countdown">5</span> 秒后跳转到：</p>
+  <input
+    type="text"
+    id="targetUrl"
+    value="https://em-bpm.dajixiangchina.com/wxapi/wxclientmsg/050b1b3c4b634250bce1a89273eb92bb"
+    style="width: 100%;"
+  />
+  <button id="startBtn">开始/重新计时跳转</button>
+  <p>如果没有自动跳转，请点击：
+    <a id="targetLink" href="#" target="_self">直接访问</a>
+  </p>
+
+  <script>
+    var WAIT_SECONDS = 5;
+    var countdownSpan = document.getElementById('countdown');
+    var targetInput = document.getElementById('targetUrl');
+    var targetLink = document.getElementById('targetLink');
+    var startBtn = document.getElementById('startBtn');
+
+    var timer = null;
+    var leftSeconds = WAIT_SECONDS;
+
+    function updateLink() {
+      var url = targetInput.value.trim() || '#';
+      targetLink.href = url;
+      targetLink.textContent = url;
+    }
+
+    function doRedirect() {
+      var url = targetInput.value.trim();
+      if (!url) return;
+      window.location.href = url;
+    }
+
+    function startCountdown() {
+      updateLink();
+      if (timer) clearInterval(timer);
+
+      leftSeconds = WAIT_SECONDS;
+      countdownSpan.textContent = leftSeconds;
+
+      timer = setInterval(function () {
+        leftSeconds--;
+        countdownSpan.textContent = leftSeconds;
+        if (leftSeconds <= 0) {
+          clearInterval(timer);
+          doRedirect();
+        }
+      }, 1000);
+    }
+
+    // 初次加载就开始倒计时
+    updateLink();
+    startCountdown();
+
+    startBtn.onclick = startCountdown;
+    targetInput.oninput = updateLink;
+  </script>
+</body>
+</html>
