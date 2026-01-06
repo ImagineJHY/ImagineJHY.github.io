@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>JS 重定向</title>
+  <script>
+    function redirectIfEnabled() {
+      var checkbox = document.getElementById('redirectToggle');
+      if (checkbox.checked) {
+        window.location.href = 'https://example.com'; // 修改为你的目标地址
+      }
+    }
+  </script>
+</head>
+<body>
+  <label>
+    <input type="checkbox" id="redirectToggle">
+    启用重定向
+  </label>
+  <button onclick="redirectIfEnabled()">跳转</button>
+</body>
+</html>
