@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>父高 = 子 padding + height</title>
+  <style>
+    /* 父元素：高度 = 子元素 padding-top + height + padding-bottom */
+    .parent {
+      width: 300px;
+      height: 60px;      /* 10 + 40 + 10 = 60 */
+      background: #eee;
+      overflow: auto;    /* 只是为了看清楚有无滚动条 */
+    }
+
+    /* 子元素：有上下 padding，height 只控制 content 高度 */
+    .child {
+      height: 40px;      /* content 高度 */
+      line-height: 40px; /* 与 height 一致 */
+      padding: 10px 0;   /* 上 10，下 10 */
+      background: #cde;
+      box-sizing: content-box; /* 默认值，写出来方便理解 */
+    }
+  </style>
+</head>
+<body>
+  <div class="parent">
+    <div class="child">单行文本</div>
+  </div>
+</body>
+</html>
