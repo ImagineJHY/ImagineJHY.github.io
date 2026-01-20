@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>height 与 line-height 一致示例（可输入）</title>
+  <style>
+    .input-box {
+      width: 200px;
+      height: 40px;
+      line-height: 40px;              /* 与 height 一致 */
+      border: 1px solid #90caf9;
+      padding: 0;                     /* 避免 padding 影响高度 */
+      box-sizing: border-box;
+      font-size: 14px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- 单行可输入的 input 示例 -->
+  <input class="input-box" type="text" placeholder="在这里输入文字" />
+</body>
+</html>
